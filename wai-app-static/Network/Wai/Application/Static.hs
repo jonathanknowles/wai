@@ -49,6 +49,7 @@ import qualified Data.Text.Encoding as TE
 import Network.HTTP.Date (epochTimeToHTTPDate, formatHTTPDate, parseHTTPDate)
 
 import Network.Mime (MimeType)
+import System.FilePath ((</>))
 import Util
 import WaiAppStatic.Storage.Embedded
 import WaiAppStatic.Storage.Filesystem
@@ -257,11 +258,13 @@ staticAppPieces _ _ req sendResponse
 staticAppPieces _ [".hidden", "folder.png"] _ sendResponse =
     sendResponse $
         W.responseLBS H.status200 [("Content-Type", "image/png")] $
-            L.fromChunks [$(makeRelativeToProject "images/folder.png" >>= embedFile)]
+        L.fromChunks
+        [$(makeRelativeToProject ("images" </> "folder.png") >>= embedFile)]
 staticAppPieces _ [".hidden", "haskell.png"] _ sendResponse =
     sendResponse $
         W.responseLBS H.status200 [("Content-Type", "image/png")] $
-            L.fromChunks [$(makeRelativeToProject "images/haskell.png" >>= embedFile)]
+        L.fromChunks
+        [$(makeRelativeToProject ("images" </> "haskell.png") >>= embedFile)]
 staticAppPieces ss rawPieces req sendResponse = liftIO $ do
     case toPieces rawPieces of
         Just pieces -> checkPieces ss pieces req >>= response
